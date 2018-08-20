@@ -19,7 +19,7 @@ public class GlogalExeception {
     @ResponseBody
     private Map<String,Object> exceptionHandler(HttpServletRequest request,Exception e){
         Map<String,Object> modelMap = new HashMap<String, Object>();
-        modelMap.put("success",true);
+        modelMap.put("success",false);
         modelMap.put("error",e.getMessage());
         return modelMap;
     }
