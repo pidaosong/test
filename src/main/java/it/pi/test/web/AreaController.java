@@ -5,6 +5,7 @@ import it.pi.test.service.AreaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -28,6 +29,15 @@ public class AreaController {
         List<Area> list = areaService.getAreaList();
         modelmap.put("list",list);
         return modelmap;
+    }
+
+    @GetMapping(value = "/getareabyid")
+    private Map<String,Object> getAreaById(@RequestParam("id")int areaId){
+         Map<String,Object> modelMap = new HashMap<String, Object>();
+         Area area = areaService.getAreaById(areaId);
+         modelMap.put("success",true);
+         modelMap.put("area",area);
+         return  modelMap;
     }
 
 }

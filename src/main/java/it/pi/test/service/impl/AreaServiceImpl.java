@@ -3,12 +3,17 @@ package it.pi.test.service.impl;
 import it.pi.test.Dao.AreaDao;
 import it.pi.test.entity.Area;
 import it.pi.test.service.AreaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @program: test
@@ -16,9 +21,16 @@ import java.util.List;
  * @create: 2018-08-20 15:07
  **/
 @Service
+@Transactional
 public class AreaServiceImpl implements AreaService {
+
+    private static  final Logger LOGGER = LoggerFactory.getLogger(AreaServiceImpl.class);
+
     @Autowired
     private AreaDao areaDao;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public List<Area> getAreaList() {
@@ -28,6 +40,20 @@ public class AreaServiceImpl implements AreaService {
 
     @Override
     public Area getAreaById(int areaId) {
+        //从缓存中获取区域信息
+        String key = "area_"+areaId;
+        ValueOperations<String,Area> operations = redisTemplate.opsForValue();
+        //缓存是否存在
+        boolean hasKey = redisTemplate.hasKey(key);
+        if(hasKey){
+            Area area = operations.get(key);
+            LOGGER.info("从缓存中取得区域信息");
+            return area;
+        }
+        Area area = areaDao.queryAreaById(areaId);
+        //插入缓存中
+        operations.set(key,area);
+        LOGGER.info("区域信息存入缓存");
         return areaDao.queryAreaById(areaId);
     }
 

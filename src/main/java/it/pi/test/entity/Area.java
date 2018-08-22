@@ -1,5 +1,6 @@
 package it.pi.test.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -7,7 +8,10 @@ import java.util.Date;
  * @author: Mr.Pi
  * @create: 2018-08-20 12:40
  **/
-public class Area {
+public class Area implements Serializable {
+
+
+    private static final long serialVersionUID = -8642675719983138010L;
     private  Integer areaId;
     private  String areaName;
     private Integer priority;
